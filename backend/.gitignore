@@ -22,3 +22,6 @@ coverage/
 # Build
 dist/
 build/
+
+# Uploads
+public/uploads/

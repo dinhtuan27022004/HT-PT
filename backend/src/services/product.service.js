@@ -465,30 +465,67 @@ const updateProduct = async (productId, productData) => {
       productId
     ]);
 
-    // 2. Handle variants - Simple approach: Delete existing and re-insert
-    // In a production app, we would match IDs to preserve them, but for now this is cleaner
-    await client.query('DELETE FROM product_variants WHERE product_id = $1', [productId]);
-    // Product images will be deleted due to CASCADE if they were linked to variants
+    // 2. Handle variants - Smart Upsert
+    const existingVariantsResult = await client.query('SELECT id FROM product_variants WHERE product_id = $1', [productId]);
+    const existingVariantIds = existingVariantsResult.rows.map(row => row.id);
+    const incomingVariantIds = variants.map(v => v.id).filter(id => id);
+
+    // Identify variants to delete
+    const variantsToDelete = existingVariantIds.filter(id => !incomingVariantIds.includes(id));
+
+    if (variantsToDelete.length > 0) {
+      for (const idToDelete of variantsToDelete) {
+        // Check if variant is in cart
+        const cartCheck = await client.query('SELECT 1 FROM cart_items WHERE variant_id = $1 LIMIT 1', [idToDelete]);
+        if (cartCheck.rows.length > 0) {
+          // Soft delete by setting status to inactive
+          await client.query("UPDATE product_variants SET status = 'inactive' WHERE id = $1", [idToDelete]);
+        } else {
+          // Safe to delete
+          await client.query('DELETE FROM product_variants WHERE id = $1', [idToDelete]);
+        }
+      }
+    }
 
     if (variants && variants.length > 0) {
       for (const variant of variants) {
-        const variantQuery = `
-          INSERT INTO product_variants 
-          (product_id, sku, variant_name, attributes, price, compare_at, cost, status)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          RETURNING id
-        `;
-
-        await client.query(variantQuery, [
-          productId,
-          variant.sku,
-          variant.name || null,
-          JSON.stringify(variant.options || {}),
-          variant.price || 0,
-          variant.compare_at || null,
-          variant.cost || null,
-          variant.status || 'active'
-        ]);
+        if (variant.id && existingVariantIds.includes(variant.id)) {
+          // Update existing variant
+          const variantQuery = `
+            UPDATE product_variants 
+            SET sku = $1, variant_name = $2, attributes = $3, price = $4, compare_at = $5, cost = $6, status = $7, updated_at = now()
+            WHERE id = $8 AND product_id = $9
+          `;
+          await client.query(variantQuery, [
+            variant.sku,
+            variant.name || null,
+            JSON.stringify(variant.options || {}),
+            variant.price || 0,
+            variant.compare_at || null,
+            variant.cost || null,
+            variant.status || 'active',
+            variant.id,
+            productId
+          ]);
+        } else {
+          // Insert new variant
+          const variantQuery = `
+            INSERT INTO product_variants 
+            (product_id, sku, variant_name, attributes, price, compare_at, cost, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING id
+          `;
+          await client.query(variantQuery, [
+            productId,
+            variant.sku,
+            variant.name || null,
+            JSON.stringify(variant.options || {}),
+            variant.price || 0,
+            variant.compare_at || null,
+            variant.cost || null,
+            variant.status || 'active'
+          ]);
+        }
       }
     }
 

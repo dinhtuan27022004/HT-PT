@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import categoryService from '../../../services/category.service';
 import productService from '../../../services/product.service';
 
-export const useProductFormInit = (id, form, message, navigate, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading) => {
+export const useProductFormInit = (id, form, message, navigate, setCategories, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading) => {
     useEffect(() => {
         const init = async () => {
             try {
                 const cats = await categoryService.getAllCategories();
+                setCategories(cats); // Update categories state
                 if (!id) return;
                 const prod = await productService.getProductById(id);
                 if (!prod) { navigate('/admin/products'); return; }

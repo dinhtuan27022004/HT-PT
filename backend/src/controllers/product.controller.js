@@ -133,6 +133,12 @@ const updateProduct = async (req, res) => {
 
     } catch (error) {
         console.error('Error in updateProduct:', error);
+
+        // Handle unique constraint violations
+        if (error.code === '23505') {
+            return errorResponse(res, 'Product with this SKU or slug already exists', 409);
+        }
+
         return errorResponse(res, error.message, 500);
     }
 };
