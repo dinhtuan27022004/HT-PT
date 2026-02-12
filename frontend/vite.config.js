@@ -8,6 +8,6 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: 'all'
+    allowedHosts: 'ht-pt-1.onrender.com'
   }
 })
