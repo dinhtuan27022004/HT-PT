@@ -26,7 +26,12 @@ const getUserProfile = async (userId) => {
  * Update user profile
  */
 const updateProfile = async (userId, updateData) => {
-    const { fullName, phone, gender, dob } = updateData;
+    // Support both camelCase (legacy/internal) and snake_case (frontend/db)
+    const fullName = updateData.fullName || updateData.full_name;
+    const phone = updateData.phone;
+    const gender = updateData.gender;
+    const dob = updateData.dob || updateData.date_of_birth;
+
     const query = `
         UPDATE users 
         SET full_name = COALESCE($1, full_name),
@@ -65,9 +70,38 @@ const deleteAddress = async (userId, addressId) => {
     return true;
 };
 
+const setDefaultAddress = async (userId, addressId) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        // 1. Unset default for all user's addresses
+        await client.query('UPDATE addresses SET is_default = false WHERE user_id = $1', [userId]);
+
+        // 2. Set new default
+        const result = await client.query(
+            'UPDATE addresses SET is_default = true WHERE id = $1 AND user_id = $2 RETURNING *',
+            [addressId, userId]
+        );
+
+        if (result.rowCount === 0) {
+            throw new Error('Address not found');
+        }
+
+        await client.query('COMMIT');
+        return result.rows[0];
+    } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
 module.exports = {
     getUserProfile,
     updateProfile,
     addAddress,
-    deleteAddress
+    deleteAddress,
+    setDefaultAddress
 };

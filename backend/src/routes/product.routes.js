@@ -10,6 +10,13 @@ const productController = require('../controllers/product.controller');
 router.get('/', productController.getAllProducts);
 
 /**
+ * @route   GET /api/v1/products/home-categories
+ * @desc    Get products grouped by category
+ * @access  Public
+ */
+router.get('/home-categories', productController.getHomeProductCategories);
+
+/**
  * @route   GET /api/v1/products/:id
  * @desc    Get product by ID
  * @access  Public
@@ -29,5 +36,12 @@ router.post('/', productController.createProduct);
  * @access  Admin (TODO: add auth middleware)
  */
 router.put('/:id', productController.updateProduct);
+
+/**
+ * @route   DELETE /api/v1/products/:id
+ * @desc    Delete product
+ * @access  Admin
+ */
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;

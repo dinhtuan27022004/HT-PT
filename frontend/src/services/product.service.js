@@ -16,6 +16,19 @@ const productService = {
     },
 
     /**
+     * Get products grouped by category for Home page
+     * @returns {Promise<Array>} List of categories with products
+     */
+    getHomeCategories: async () => {
+        try {
+            const response = await api.get('/products/home-categories');
+            return response.data.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    /**
      * Get product by ID
      * @param {string} id - Product UUID
      * @returns {Promise<Object>} Product details
@@ -53,6 +66,20 @@ const productService = {
         try {
             const response = await api.put(`/products/${id}`, productData);
             return response.data.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    /**
+     * Delete product by ID
+     * @param {string} id - Product UUID
+     * @returns {Promise<boolean>} Success status
+     */
+    deleteProduct: async (id) => {
+        try {
+            const response = await api.delete(`/products/${id}`);
+            return response.data;
         } catch (error) {
             throw error;
         }

@@ -38,7 +38,6 @@ const AppHeader = () => {
             <div className="header-container">
                 <div className="header-left">
                     <div className="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>GEARVN</div>
-                    <Button className="category-btn" icon={<MenuOutlined />} onClick={() => setDrawerVisible(true)}>Danh mục</Button>
                 </div>
                 <div className="header-center">
                     <Search placeholder="Bạn cần tìm gì?" onSearch={onSearch} className="search-bar" size="large" enterButton />
@@ -51,10 +50,20 @@ const AppHeader = () => {
                     handleLogout={handleLogout}
                 />
             </div>
-            <Drawer title="Danh mục sản phẩm" placement="left" onClose={() => setDrawerVisible(false)} open={drawerVisible}>
-                <CategorySidebar mode="inline" />
-            </Drawer>
-            <AuthModal open={authModalVisible} onCancel={() => setAuthModalVisible(false)} />
+            <AuthModal
+                open={authModalVisible}
+                onCancel={() => setAuthModalVisible(false)}
+                onLoginSuccess={() => {
+                    try {
+                        const currentUser = authService.getCurrentUser();
+                        setUser(currentUser);
+                        setAuthModalVisible(false);
+                    } catch (error) {
+                        console.error("Login success handler error:", error);
+                        setAuthModalVisible(false);
+                    }
+                }}
+            />
         </header>
     );
 };

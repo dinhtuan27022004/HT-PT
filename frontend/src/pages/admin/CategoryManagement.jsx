@@ -13,7 +13,7 @@ const CategoryManagement = () => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <Title level={2} style={{ margin: 0 }}>Quản lý danh mục</Title>
+                <Title level={3} style={{ margin: 0 }}>Quản lý danh mục</Title>
                 <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => showModal()} style={{ borderRadius: '8px', height: '45px' }}>Thêm danh mục mới</Button>
             </div>
             <CategoryTable categories={categories} loading={tableLoading} onEdit={showModal} onDelete={handleDelete} />

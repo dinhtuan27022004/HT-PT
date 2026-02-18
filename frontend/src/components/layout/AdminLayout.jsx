@@ -20,7 +20,9 @@ const AdminLayout = () => {
         {
             key: 'products-group', icon: <FolderOutlined />, label: 'Catalog', children: [
                 { key: '/admin/products', label: 'Sản phẩm' },
-                { key: '/admin/categories', label: 'Danh mục' }
+                { key: '/admin/categories', label: 'Danh mục' },
+                { key: '/admin/brands', label: 'Thương hiệu' },
+                { key: '/admin/banners', label: 'Banners' }
             ]
         },
         { key: '/admin/orders', icon: <OrderedListOutlined />, label: 'Đơn hàng' },

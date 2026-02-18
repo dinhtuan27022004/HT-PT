@@ -1,41 +1,58 @@
-import React from 'react';
-import { Button, Typography } from 'antd';
-import { ShoppingOutlined, RightOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Carousel, Spin } from 'antd';
+
+import bannerService from '../../../services/banner.service';
 import './Hero.css';
 
-const { Title, Paragraph } = Typography;
-
 const Hero = () => {
+    const [banners, setBanners] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBanners = async () => {
+            try {
+                // DIRECT FETCH FOR DEBUGGING
+                const res = await bannerService.getPublicBanners('main');
+                if (res.status === 'success') {
+                    setBanners(res.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch banners', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBanners();
+    }, []);
+
+    if (loading) return <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Spin /></div>;
+
+    if (banners.length === 0) return null;
+
     return (
-        <div className="hero-section">
-            <div className="hero-content">
-                <div className="hero-badge">CHƯƠNG TRÌNH KHUYẾN MÃI TẾT 2026</div>
-                <Title className="hero-main-title">
-                    NÂNG TẦM
-                    <br />
-                    <span className="highlight">TRẢI NGHIỆM</span>
-                </Title>
-                <Paragraph className="hero-description">
-                    Khám phá bộ sưu tập Gaming Gear và Laptop đời mới nhất.
-                    Ưu đãi lên đến 50% cho tất cả các đơn hàng trong tuần lễ này.
-                </Paragraph>
-                <div className="hero-actions">
-                    <Button type="primary" size="large" icon={<ShoppingOutlined />} className="hero-btn-primary">
-                        Mua sắm ngay
-                    </Button>
-                    <Button type="default" size="large" icon={<RightOutlined />} className="hero-btn-secondary">
-                        Xem chi tiết
-                    </Button>
+        <Carousel autoplay className="hero-carousel" arrows dots infinite draggable>
+            {banners.map(banner => (
+                <div key={banner.id} className="hero-slide">
+                    <div className="hero-section">
+                        {banner.link_url ? (
+                            <a href={banner.link_url} className="hero-link">
+                                <img
+                                    src={banner.image_url}
+                                    alt={banner.title || "Banner"}
+                                    className="hero-image"
+                                />
+                            </a>
+                        ) : (
+                            <img
+                                src={banner.image_url}
+                                alt={banner.title || "Banner"}
+                                className="hero-image"
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
-            <div className="hero-visual">
-                <div className="hero-blob"></div>
-                <div className="hero-image-mock">
-                    {/* In a real app, this would be a high-quality product image */}
-                    <img src="https://gearvn.com/cdn/shop/files/pc_gaming_premium.png" alt="PC Gaming" style={{ width: '100%', height: 'auto' }} />
-                </div>
-            </div>
-        </div>
+            ))}
+        </Carousel>
     );
 };
 

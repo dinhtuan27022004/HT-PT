@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 const AttributeImageValues = ({ selectedAttrs, attrValues, currentValues, onChange }) => (
     <div style={{ marginBottom: 24, display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-        {selectedAttrs.map(name => (
+        {selectedAttrs.filter(name => name).map(name => (
             <span key={name} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                 <Text>{name}:</Text>
                 <Radio.Group value={currentValues[name]} onChange={(e) => onChange(name, e.target.value)} optionType="button" buttonStyle="solid">

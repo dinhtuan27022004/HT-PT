@@ -8,21 +8,22 @@ import ProductInfoSection from './components/ProductInfoSection';
 import ProductSpecs from './components/ProductSpecs';
 import ProductReviews from './components/ProductReviews';
 import { useProductDetail } from './hooks/useProductDetail';
-import { LeftBanner, RightBanner } from './components/SideBanners';
+import { LeftBanner, RightBanner } from '../../components/common/SideBanners';
+import RelatedProducts from './components/RelatedProducts';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
     const { id } = useParams();
-    const { 
-        loading, 
-        product, 
-        selectedVariant, 
-        selectedOptions, 
-        activeImageSet, 
-        imageIndex, 
-        setImageIndex, 
-        allOptions, 
-        handleOptionChange 
+    const {
+        loading,
+        product,
+        selectedVariant,
+        selectedOptions,
+        activeImageSet,
+        imageIndex,
+        setImageIndex,
+        allOptions,
+        handleOptionChange
     } = useProductDetail(id);
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p || 0);
 
@@ -31,7 +32,7 @@ const ProductDetailPage = () => {
 
     return (
         <MainLayout>
-            <div className="product-detail-page-wrapper">
+            <div className="page-content-wrapper">
                 <Row gutter={[24, 24]} justify="center">
                     <LeftBanner />
                     <Col xs={24} lg={22} xxl={18}>
@@ -40,29 +41,30 @@ const ProductDetailPage = () => {
                             <div className="product-main-content-card">
                                 <Row gutter={[40, 40]}>
                                     <Col xs={24} lg={10}>
-                                        <ProductGallery 
-                                            imageSet={activeImageSet} 
-                                            imageIndex={imageIndex} 
-                                            setImageIndex={setImageIndex} 
-                                            title={product.name} 
+                                        <ProductGallery
+                                            imageSet={activeImageSet}
+                                            imageIndex={imageIndex}
+                                            setImageIndex={setImageIndex}
+                                            title={product.name}
                                         />
                                     </Col>
                                     <Col xs={24} lg={14}>
-                                        <ProductInfoSection 
-                                            product={product} 
-                                            selectedVariant={selectedVariant} 
-                                            selectedOptions={selectedOptions} 
-                                            allOptions={allOptions} 
-                                            handleOptionChange={handleOptionChange} 
-                                            formatPrice={formatPrice} 
+                                        <ProductInfoSection
+                                            product={product}
+                                            selectedVariant={selectedVariant}
+                                            selectedOptions={selectedOptions}
+                                            allOptions={allOptions}
+                                            handleOptionChange={handleOptionChange}
+                                            formatPrice={formatPrice}
                                         />
                                     </Col>
                                 </Row>
                             </div>
-                            <ProductSpecs 
-                                product={product} 
-                                selectedOptions={selectedOptions} 
+                            <ProductSpecs
+                                product={product}
+                                selectedOptions={selectedOptions}
                             />
+                            <RelatedProducts categoryId={product.category_id} currentProductId={product.id} />
                             <ProductReviews productId={product.id} />
                         </div>
                     </Col>

@@ -22,6 +22,7 @@ app.use('/api/v1/orders', require('./routes/order.routes'));
 app.use('/api/v1/users', require('./routes/user.routes'));
 app.use('/api/v1/reviews', require('./routes/review.routes'));
 app.use('/api/v1/brands', require('./routes/brand.routes'));
+app.use('/api/v1/banners', require('./routes/banner.routes'));
 
 // Default route
 app.get('/', (req, res) => {

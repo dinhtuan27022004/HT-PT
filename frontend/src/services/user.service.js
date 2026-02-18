@@ -16,6 +16,10 @@ const userService = {
     removeAddress: async (id) => {
         const response = await api.delete(`/users/addresses/${id}`);
         return response.data;
+    },
+    setDefaultAddress: async (id) => {
+        const response = await api.put(`/users/addresses/${id}/default`);
+        return response.data;
     }
 };
 

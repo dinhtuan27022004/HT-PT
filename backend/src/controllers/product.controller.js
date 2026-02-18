@@ -1,4 +1,5 @@
 const productService = require('../services/product.service');
+const categoryService = require('../services/category.service');
 const { successResponse, errorResponse } = require('../utils/response.util');
 
 /**
@@ -143,9 +144,73 @@ const updateProduct = async (req, res) => {
     }
 };
 
+/**
+ * Get products grouped by category for Home page
+ * GET /api/v1/products/home-categories
+ */
+const getHomeProductCategories = async (req, res) => {
+    try {
+        // 1. Get all active categories
+        const categories = await categoryService.getAllCategories();
+
+        // 2. Fetch products for each category
+        const categoriesWithProducts = await Promise.all(
+            categories.map(async (category) => {
+                // Skip if category is not active (if status exists)
+                if (category.status && category.status !== 'active') return null;
+
+                const products = await productService.getAllProducts({
+                    category_id: category.id,
+                    limit: 12, // Fetch top 12 products
+                    published: true
+                });
+
+                // Only return categories that have products
+                if (products.length === 0) return null;
+
+                return {
+                    ...category,
+                    products
+                };
+            })
+        );
+
+        // Filter out nulls
+        const result = categoriesWithProducts.filter(Boolean);
+
+        return successResponse(res, result, 'Home categories retrieved successfully');
+
+    } catch (error) {
+        console.error('Error in getHomeProductCategories:', error);
+        return errorResponse(res, error.message, 500);
+    }
+};
+
+/**
+ * Delete product
+ * DELETE /api/v1/products/:id
+ */
+const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await productService.deleteProduct(id);
+        return successResponse(res, null, 'Product deleted successfully');
+
+    } catch (error) {
+        console.error('Error in deleteProduct:', error);
+        if (error.message === 'Product not found') {
+            return errorResponse(res, 'Product not found', 404);
+        }
+        return errorResponse(res, error.message, 500);
+    }
+};
+
 module.exports = {
     getAllProducts,
     getProductById,
     createProduct,
-    updateProduct
+    updateProduct,
+    deleteProduct,
+    getHomeProductCategories
 };

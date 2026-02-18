@@ -10,9 +10,8 @@
 }
 
 .product-card:hover {
-    box-shadow: 0 2px 8px var(--color-primary);
+    box-shadow: none;
     border-color: var(--color-primary) !important;
-    transform: translateY(-4px);
 }
 
 .product-image-wrapper {

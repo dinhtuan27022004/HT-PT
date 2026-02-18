@@ -16,9 +16,28 @@ export const CartProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
     const loadCart = useCallback(async () => {
-        if (!isLoggedIn) { const saved = localStorage.getItem('guest_cart'); if (saved) setCartItems(JSON.parse(saved)); return; }
-        try { setLoading(true); const res = await cartService.getCart(); if (res.status === 'success') setCartItems(res.data.items || []); }
-        catch (e) { console.error(e); } finally { setLoading(false); }
+        if (!isLoggedIn) {
+            const saved = localStorage.getItem('guest_cart');
+            if (saved) setCartItems(JSON.parse(saved));
+            return;
+        }
+        try {
+            setLoading(true);
+            const res = await cartService.getCart();
+            if (res.status === 'success') setCartItems(res.data.items || []);
+        } catch (e) {
+            console.error('Failed to load cart:', e);
+            if (e.response && e.response.status === 401) {
+                // Token invalid/expired
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setIsLoggedIn(false);
+                setCartItems([]);
+                // Optionally redirect or show message
+            }
+        } finally {
+            setLoading(false);
+        }
     }, [isLoggedIn]);
 
     useEffect(() => { loadCart(); }, [loadCart]);

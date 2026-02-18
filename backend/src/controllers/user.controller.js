@@ -43,9 +43,21 @@ const removeAddress = async (req, res) => {
     }
 };
 
+const setDefaultAddress = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { id } = req.params;
+        const address = await userService.setDefaultAddress(userId, id);
+        return successResponse(res, address, 'Default address updated successfully');
+    } catch (error) {
+        return errorResponse(res, error.message);
+    }
+};
+
 module.exports = {
     getProfile,
     updateProfile,
     addAddress,
-    removeAddress
+    removeAddress,
+    setDefaultAddress
 };

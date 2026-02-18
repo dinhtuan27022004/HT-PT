@@ -9,5 +9,6 @@ router.get('/profile', userController.getProfile);
 router.put('/profile', userController.updateProfile);
 router.post('/addresses', userController.addAddress);
 router.delete('/addresses/:id', userController.removeAddress);
+router.put('/addresses/:id/default', userController.setDefaultAddress);
 
 module.exports = router;

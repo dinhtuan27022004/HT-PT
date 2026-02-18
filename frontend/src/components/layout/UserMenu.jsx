@@ -23,7 +23,7 @@ const UserMenu = ({ user, navigate, handleLogout }) => {
             key: 'orders',
             label: 'Đơn hàng của tôi',
             icon: <FileTextOutlined />,
-            onClick: () => navigate('/orders'),
+            onClick: () => navigate('/profile/orders'),
         },
         { type: 'divider' },
         {

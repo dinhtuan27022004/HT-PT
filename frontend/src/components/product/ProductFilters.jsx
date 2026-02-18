@@ -7,7 +7,7 @@ import brandService from '../../services/brand.service';
 const { Text } = Typography;
 const { Option } = Select;
 
-const ProductFilters = ({ onFilterChange }) => {
+const ProductFilters = ({ onFilterChange, hideCategoryFilter = false }) => {
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -63,20 +63,22 @@ const ProductFilters = ({ onFilterChange }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                     <Space size="large" wrap>
-                        <Space>
-                            <AppstoreOutlined style={{ color: '#8c8c8c' }} />
-                            <Text strong>Danh mục:</Text>
-                            <Select
-                                placeholder="Tất cả danh mục"
-                                style={{ width: 180 }}
-                                onChange={handleCategoryChange}
-                                allowClear
-                            >
-                                {categories.map(cat => (
-                                    <Option key={cat.id} value={cat.id}>{cat.name}</Option>
-                                ))}
-                            </Select>
-                        </Space>
+                        {!hideCategoryFilter && (
+                            <Space>
+                                <AppstoreOutlined style={{ color: '#8c8c8c' }} />
+                                <Text strong>Danh mục:</Text>
+                                <Select
+                                    placeholder="Tất cả danh mục"
+                                    style={{ width: 180 }}
+                                    onChange={handleCategoryChange}
+                                    allowClear
+                                >
+                                    {categories.map(cat => (
+                                        <Option key={cat.id} value={cat.id}>{cat.name}</Option>
+                                    ))}
+                                </Select>
+                            </Space>
+                        )}
 
                         <Space>
                             <TagsOutlined style={{ color: '#8c8c8c' }} />
@@ -94,42 +96,43 @@ const ProductFilters = ({ onFilterChange }) => {
                         </Space>
 
                         <Space>
-                            <SortAscendingOutlined style={{ color: '#8c8c8c' }} />
-                            <Text strong>Sắp xếp:</Text>
-                            <Select
-                                defaultValue="newest"
-                                style={{ width: 180 }}
-                                onChange={handleSortChange}
-                            >
-                                <Option value="newest">Mới nhất</Option>
-                                <Option value="price_asc">Giá: Thấp đến Cao</Option>
-                                <Option value="price_desc">Giá: Cao đến Thấp</Option>
-                                <Option value="rating_desc">Đánh giá cao nhất</Option>
-                            </Select>
+                            <FilterOutlined style={{ color: '#8c8c8c' }} />
+                            <Text strong>Khoảng giá:</Text>
+                            <InputNumber
+                                placeholder="Từ"
+                                min={0}
+                                style={{ width: 110 }}
+                                onChange={(v) => handlePriceChange('minPrice', v)}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                            />
+                            <Text type="secondary">-</Text>
+                            <InputNumber
+                                placeholder="Đến"
+                                min={0}
+                                style={{ width: 110 }}
+                                onChange={(v) => handlePriceChange('maxPrice', v)}
+                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                            />
+                            <Text type="secondary">₫</Text>
                         </Space>
                     </Space>
 
+
                     <Space>
-                        <FilterOutlined style={{ color: '#8c8c8c' }} />
-                        <Text strong>Khoảng giá:</Text>
-                        <InputNumber
-                            placeholder="Từ"
-                            min={0}
-                            style={{ width: 110 }}
-                            onChange={(v) => handlePriceChange('minPrice', v)}
-                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                        />
-                        <Text type="secondary">-</Text>
-                        <InputNumber
-                            placeholder="Đến"
-                            min={0}
-                            style={{ width: 110 }}
-                            onChange={(v) => handlePriceChange('maxPrice', v)}
-                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                        />
-                        <Text type="secondary">₫</Text>
+                        <SortAscendingOutlined style={{ color: '#8c8c8c' }} />
+                        <Text strong>Sắp xếp:</Text>
+                        <Select
+                            defaultValue="newest"
+                            style={{ width: 180 }}
+                            onChange={handleSortChange}
+                        >
+                            <Option value="newest">Mới nhất</Option>
+                            <Option value="price_asc">Giá: Thấp đến Cao</Option>
+                            <Option value="price_desc">Giá: Cao đến Thấp</Option>
+                            <Option value="rating_desc">Đánh giá cao nhất</Option>
+                        </Select>
                     </Space>
                 </div>
 
@@ -137,7 +140,6 @@ const ProductFilters = ({ onFilterChange }) => {
                     <>
                         <Divider style={{ margin: '8px 0' }} />
                         <Space wrap size="large">
-                            <Text strong type="secondary">Bộ lọc chi tiết:</Text>
                             {dynamicAttributes.map(attr => (
                                 <Space key={attr.name}>
                                     <Text>{attr.name}:</Text>

@@ -16,4 +16,25 @@ router.get('/', brandController.getAllBrands);
  */
 router.get('/:id', brandController.getBrandById);
 
+/**
+ * @route   POST /api/v1/brands
+ * @desc    Create new brand
+ * @access  Admin Only
+ */
+router.post('/', brandController.createBrand);
+
+/**
+ * @route   PUT /api/v1/brands/:id
+ * @desc    Update brand
+ * @access  Admin Only
+ */
+router.put('/:id', brandController.updateBrand);
+
+/**
+ * @route   DELETE /api/v1/brands/:id
+ * @desc    Delete brand
+ * @access  Admin Only
+ */
+router.delete('/:id', brandController.deleteBrand);
+
 module.exports = router;

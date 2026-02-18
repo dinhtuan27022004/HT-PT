@@ -1,17 +1,38 @@
 import { useState, useEffect } from 'react';
 import categoryService from '../../../services/category.service';
 import productService from '../../../services/product.service';
+import brandService from '../../../services/brand.service';
 
-export const useProductFormInit = (id, form, message, navigate, setCategories, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading) => {
+export const useProductFormInit = (id, form, message, navigate, setCategories, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading, setBrands, setFilteredBrands) => {
     useEffect(() => {
         const init = async () => {
             try {
-                const cats = await categoryService.getAllCategories();
-                setCategories(cats); // Update categories state
+                const [cats, brandsData] = await Promise.all([
+                    categoryService.getAllCategories(),
+                    brandService.getAllBrands()
+                ]);
+                setCategories(cats);
+                setBrands(brandsData);
+
                 if (!id) return;
                 const prod = await productService.getProductById(id);
                 if (!prod) { navigate('/admin/products'); return; }
-                form.setFieldsValue({ name: prod.name, sku: prod.sku, description: prod.description, category_id: prod.category_id, status: prod.is_published ? 'active' : 'inactive' });
+
+                // Set initial filtered brands based on product category
+                if (prod.category_id) {
+                    const associatedBrands = brandsData.filter(b => b.category_ids && b.category_ids.includes(prod.category_id));
+                    setFilteredBrands(associatedBrands);
+                }
+
+                form.setFieldsValue({
+                    name: prod.name,
+                    sku: prod.sku,
+                    description: prod.description,
+                    category_id: prod.category_id,
+                    brand_id: prod.brand_id,
+                    status: prod.is_published ? 'active' : 'inactive'
+                });
+
                 const cat = cats.find(c => c.id === prod.category_id);
                 if (cat) {
                     setSelectedCategory(cat); setAttributes(cat.attributes || []);
@@ -29,7 +50,7 @@ export const useProductFormInit = (id, form, message, navigate, setCategories, s
                     });
                     setGeneralImages(gens); setAttributeImages(attrImgs); if (firstC) setImageAttributeValues(firstC);
                 }
-            } catch (e) { message.error('Lỗi'); } finally { setLoading(false); }
+            } catch (e) { message.error('Lỗi'); console.error(e); } finally { setLoading(false); }
         };
         init();
     }, [id]);
