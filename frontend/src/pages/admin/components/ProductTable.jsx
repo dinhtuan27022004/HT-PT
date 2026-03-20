@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Button, Space, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
-const ProductTable = ({ products, loading, navigate }) => {
+const ProductTable = ({ products, loading, navigate, onDelete }) => {
     const columns = [
         { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
         { title: 'SKU', dataIndex: 'sku', key: 'sku' },
@@ -29,8 +29,24 @@ const ProductTable = ({ products, loading, navigate }) => {
             title: 'Thao tác', key: 'action',
             render: (_, r) => (
                 <Space size="middle">
-                    <Button type="primary" icon={<EditOutlined />} size="small" onClick={() => navigate(`/admin/products/edit/${r.id}`)} />
-                    <Button type="primary" danger icon={<DeleteOutlined />} size="small" />
+                    <Button 
+                        type="primary" 
+                        icon={<EditOutlined />} 
+                        style={{ 
+                            backgroundColor: 'var(--color-primary)', 
+                            borderColor: 'var(--color-primary)', 
+                            color: '#fff' 
+                        }} 
+                        size="small" 
+                        onClick={() => navigate(`/admin/products/edit/${r.id}`)} 
+                    />
+                    <Button 
+                        type="primary" 
+                        icon={<DeleteOutlined />} 
+                        style={{ backgroundColor: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: '#fff' }} 
+                        size="small" 
+                        onClick={() => onDelete(r.id)} 
+                    />
                 </Space>
             ),
         },

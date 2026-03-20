@@ -14,23 +14,6 @@ const HeaderActions = ({ user, cartCount, navigate, showAuthModal, handleLogout 
                     <span className="action-value">1900.5301</span>
                 </div>
             </div>
-
-            <div className="action-item">
-                <ShopOutlined className="action-icon" />
-                <div className="action-text">
-                    <span className="action-label">Hệ thống</span>
-                    <span className="action-value">Showroom</span>
-                </div>
-            </div>
-
-            <div className="action-item" onClick={() => navigate('/orders')} style={{ cursor: 'pointer' }}>
-                <FileTextOutlined className="action-icon" />
-                <div className="action-text">
-                    <span className="action-label">Tra cứu</span>
-                    <span className="action-value">Đơn hàng</span>
-                </div>
-            </div>
-
             <div className="action-item" onClick={() => navigate('/cart')} style={{ cursor: 'pointer' }}>
                 <Badge count={cartCount} showZero style={{ backgroundColor: COLORS.PRIMARY }}>
                     <ShoppingCartOutlined className="action-icon" />

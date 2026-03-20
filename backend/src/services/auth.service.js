@@ -42,7 +42,7 @@ const signUp = async (userData) => {
 };
 
 const login = async (email, password) => {
-    const query = `SELECT * FROM users WHERE email = $1 AND status = 'active'`;
+    const query = `SELECT * FROM users WHERE email = $1`;
     const result = await db.query(query, [email]);
 
     const user = result.rows[0];
@@ -55,9 +55,13 @@ const login = async (email, password) => {
         throw new Error('Email hoặc mật khẩu không đúng');
     }
 
+    if (user.status === 'inactive') {
+        throw new Error('Tài khoản của bạn đã bị khóa');
+    }
+
     // Generate token
     const token = jwt.sign(
-        { id: user.id, email: user.email },
+        { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET || 'your_jwt_secret',
         { expiresIn: '7d' }
     );

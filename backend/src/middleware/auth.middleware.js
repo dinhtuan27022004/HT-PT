@@ -26,6 +26,18 @@ const protect = (req, res, next) => {
     }
 };
 
+const admin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({
+            status: 'error',
+            message: 'Không có quyền truy cập tài nguyên này'
+        });
+    }
+};
+
 module.exports = {
-    protect
+    protect,
+    admin
 };

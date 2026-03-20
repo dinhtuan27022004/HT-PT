@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Divider, message, Form } from 'antd';
+import { Card, Row, Col, Divider, App, Form } from 'antd';
 import reviewService from '../../../services/review.service';
 import authService from '../../../services/auth.service';
 import ReviewSummary from './reviews/ReviewSummary';
@@ -7,6 +7,7 @@ import ReviewForm from './reviews/ReviewForm';
 import ReviewList from './reviews/ReviewList';
 
 const ProductReviews = ({ productId }) => {
+    const { message } = App.useApp();
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);

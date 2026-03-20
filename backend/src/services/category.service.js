@@ -48,7 +48,7 @@ const getCategoryById = async (id) => {
  */
 const createCategory = async (categoryData) => {
     try {
-        const { name, slug, parent_id, icon } = categoryData;
+        const { name, slug, parent_id, icon, status, attributes } = categoryData;
         const query = `
             INSERT INTO categories (name, slug, parent_id, icon, status, attributes)
             VALUES ($1, $2, $3, $4, $5, $6)

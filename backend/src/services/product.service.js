@@ -554,10 +554,48 @@ const updateProduct = async (productId, productData) => {
   }
 };
 
+/**
+ * Delete a product by ID
+ * @param {string} productId - Product UUID
+ * @returns {Promise<boolean>} Success status
+ */
+const deleteProduct = async (productId) => {
+  const client = await db.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Delete related data first (though foreign key constraints might handle this if cascade is set)
+    // But let's be explicit to be safe
+    // 1. Delete attribute images
+    await client.query('DELETE FROM product_attribute_images WHERE product_id = $1', [productId]);
+
+    // 2. Delete variants
+    await client.query('DELETE FROM product_variants WHERE product_id = $1', [productId]);
+
+    // 3. Delete product
+    const result = await client.query('DELETE FROM products WHERE id = $1 RETURNING id', [productId]);
+
+    if (result.rowCount === 0) {
+      throw new Error('Product not found');
+    }
+
+    await client.query('COMMIT');
+    return true;
+
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   getProductCount,
   createProduct,
-  updateProduct
+  updateProduct,
+  deleteProduct
 };

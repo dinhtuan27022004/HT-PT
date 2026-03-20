@@ -14,7 +14,7 @@ const { Title } = Typography;
 const EditProduct = () => {
     const { id } = useParams();
     const { message } = App.useApp();
-    const { form, loading, submitting, categories, selectedCategory, attributes, attributeValues, inputValue, setInputValue, variants, selectedImageAttributes, setSelectedImageAttributes, imageAttributeValues, setImageAttributeValues, attributeImages, setAttributeImages, generalImages, setGeneralImages, handleCategoryChange, handleAttributeValueChange, handleVariantChange, onFinish, navigate } = useProductForm(id);
+    const { form, loading, submitting, categories, selectedCategory, filteredBrands, attributes, attributeValues, inputValue, setInputValue, variants, selectedImageAttributes, setSelectedImageAttributes, imageAttributeValues, setImageAttributeValues, attributeImages, setAttributeImages, generalImages, setGeneralImages, handleCategoryChange, handleAttributeValueChange, handleVariantChange, onFinish, navigate } = useProductForm(id);
 
     if (loading) return <div style={{ padding: '100px', textAlign: 'center' }}><Spin size="large" tip="Đang tải dữ liệu..." /></div>;
 
@@ -25,7 +25,7 @@ const EditProduct = () => {
                 <Title level={2} style={{ margin: 0 }}>Chỉnh sửa sản phẩm</Title>
             </div>
             <Form form={form} layout="vertical" onFinish={onFinish}>
-                <BasicInfoSection categories={categories} onCategoryChange={handleCategoryChange} />
+                <BasicInfoSection categories={categories} filteredBrands={filteredBrands} onCategoryChange={handleCategoryChange} />
                 <AttributeManager selectedCategory={selectedCategory} attributes={attributes} attributeValues={attributeValues} inputValue={inputValue} setInputValue={setInputValue} onAttributeValueChange={handleAttributeValueChange} />
                 <ImageUploadSection attributes={attributes} attributeValues={attributeValues} generalImages={generalImages} setGeneralImages={setGeneralImages} selectedImageAttributes={selectedImageAttributes} setSelectedImageAttributes={setSelectedImageAttributes} imageAttributeValues={imageAttributeValues} setImageAttributeValues={setImageAttributeValues} attributeImages={attributeImages} setAttributeImages={setAttributeImages} onUploadImage={productService.uploadImage} message={message} />
                 <VariantTable variants={variants} onVariantChange={handleVariantChange} />

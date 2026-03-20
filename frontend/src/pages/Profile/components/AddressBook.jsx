@@ -7,7 +7,7 @@ const { Title, Text } = Typography;
 
 const AddressBook = ({ addresses, setIsAddressModalOpen, fetchProfile }) => {
     return (
-        <Card bordered={false}>
+        <Card bordered={false} style={{ borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                 <Title level={4} style={{ margin: 0 }}>Địa chỉ của tôi</Title>
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsAddressModalOpen(true)}>Thêm địa chỉ mới</Button>
@@ -17,7 +17,14 @@ const AddressBook = ({ addresses, setIsAddressModalOpen, fetchProfile }) => {
                 renderItem={(item) => (
                     <List.Item
                         actions={[
-                            <Button type="link" danger onClick={() => userService.removeAddress(item.id).then(fetchProfile)}>Xóa</Button>
+                            !item.is_default && (
+                                <Button type="link" onClick={() => userService.setDefaultAddress(item.id).then(fetchProfile)}>
+                                    Đặt làm mặc định
+                                </Button>
+                            ),
+                            <Button type="link" danger onClick={() => userService.removeAddress(item.id).then(fetchProfile)}>
+                                Xóa
+                            </Button>
                         ]}
                     >
                         <List.Item.Meta

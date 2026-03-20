@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, Button, Select } from 'antd';
+import { Modal, Form, Input, Button, Select, DatePicker, Checkbox } from 'antd';
 
 const { Option } = Select;
 
@@ -8,6 +8,9 @@ export const EditProfileModal = ({ open, onCancel, form, onFinish }) => (
         <Form form={form} layout="vertical" onFinish={onFinish}>
             <Form.Item name="full_name" label="Họ và tên" rules={[{ required: true }]}><Input /></Form.Item>
             <Form.Item name="phone" label="Số điện thoại"><Input /></Form.Item>
+            <Form.Item name="date_of_birth" label="Ngày sinh">
+                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" placeholder="Chọn ngày sinh" />
+            </Form.Item>
             <Form.Item name="gender" label="Giới tính">
                 <Select>
                     <Option value="male">Nam</Option>
@@ -26,6 +29,9 @@ export const AddAddressModal = ({ open, onCancel, form, onFinish }) => (
             <Form.Item name="recipient" label="Tên người nhận" rules={[{ required: true }]}><Input /></Form.Item>
             <Form.Item name="phone" label="Số điện thoại" rules={[{ required: true }]}><Input /></Form.Item>
             <Form.Item name="line1" label="Địa chỉ chi tiết" rules={[{ required: true }]}><Input.TextArea rows={3} /></Form.Item>
+            <Form.Item name="is_default" valuePropName="checked">
+                <Checkbox>Đặt làm địa chỉ mặc định</Checkbox>
+            </Form.Item>
             <Button type="primary" htmlType="submit" block>Lưu địa chỉ</Button>
         </Form>
     </Modal>

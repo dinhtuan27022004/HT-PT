@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Row, Col, Spin, Alert, Empty } from 'antd';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import ProductFilters from './ProductFilters';
 import productService from '../../services/product.service';
 import { transformProduct } from '../../utils/dataTransform';
+import './ProductGrid.css';
 
-const ProductGrid = () => {
+const ProductGrid = ({ categoryId: propCategoryId }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchParams] = useSearchParams();
+    const categoryId = propCategoryId || searchParams.get('category');
+
     const [filters, setFilters] = useState({
         sort: 'newest',
         minPrice: null,
@@ -17,7 +22,7 @@ const ProductGrid = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [filters]);
+    }, [filters, categoryId]);
 
     const fetchProducts = async () => {
         try {
@@ -26,6 +31,7 @@ const ProductGrid = () => {
                 page: 1,
                 limit: 24,
                 published: true,
+                category_id: categoryId || undefined,
                 ...filters
             };
 
@@ -62,7 +68,7 @@ const ProductGrid = () => {
 
     return (
         <div className="product-grid-container">
-            <ProductFilters onFilterChange={handleFilterChange} />
+            <ProductFilters onFilterChange={handleFilterChange} hideCategoryFilter={!!propCategoryId} />
 
             {loading ? (
                 <div style={{ padding: '50px', textAlign: 'center' }}>
@@ -80,12 +86,11 @@ const ProductGrid = () => {
                     {products.map((product) => (
                         <Col
                             key={product.id}
+                            className="product-grid-col-5"
+                            style={{ overflow: 'visible' }}
                             xs={24}
                             sm={12}
-                            md={12}
-                            lg={8}
-                            xl={6}
-                            xxl={4}
+                            md={8}
                         >
                             <ProductCard product={product} />
                         </Col>

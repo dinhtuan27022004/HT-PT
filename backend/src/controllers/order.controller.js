@@ -44,8 +44,36 @@ const getOrderDetail = async (req, res) => {
     }
 };
 
+const getAllOrders = async (req, res) => {
+    try {
+        const { status, search } = req.query;
+        const orders = await orderService.getAllOrders({ status, search });
+        return successResponse(res, orders, 'All orders retrieved successfully');
+    } catch (error) {
+        return errorResponse(res, error.message);
+    }
+};
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status, comment } = req.body;
+
+        if (!status) {
+            return errorResponse(res, 'Trạng thái là bắt buộc', 400);
+        }
+
+        const order = await orderService.updateOrderStatus(id, status, comment);
+        return successResponse(res, order, 'Cập nhật trạng thái đơn hàng thành công');
+    } catch (error) {
+        return errorResponse(res, error.message);
+    }
+};
+
 module.exports = {
     createOrder,
     getMyOrders,
-    getOrderDetail
+    getOrderDetail,
+    getAllOrders,
+    updateOrderStatus
 };

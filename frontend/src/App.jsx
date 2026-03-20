@@ -5,15 +5,19 @@ import AdminLayout from './components/layout/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
+import BrandManagement from './pages/admin/BrandManagement';
+import BannerManagement from './pages/admin/BannerManagement';
+import OrderManagement from './pages/admin/OrderManagement';
+import CustomerManagement from './pages/admin/CustomerManagement';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
 import ProductDetailPage from './pages/ProductDetail';
+import CategoryPage from './pages/Category';
 import { COLORS } from './theme/colors';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/Cart';
 import CheckoutPage from './pages/Checkout';
-import OrdersPage from './pages/Orders';
 import SearchPage from './pages/Search';
 import ProfilePage from './pages/Profile';
 
@@ -44,12 +48,19 @@ function App() {
           <CartProvider>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/category/:id" element={<CategoryPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
               <Route path="/search" element={<SearchPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+
+              <Route path="/profile" element={<ProfilePage />}>
+                <Route index element={<ProfilePage.PersonalInfo />} />
+                <Route path="orders" element={<ProfilePage.Orders />} />
+                <Route path="orders/:id" element={<ProfilePage.OrderDetail />} />
+                <Route path="address" element={<ProfilePage.Address />} />
+                <Route path="*" element={<ProfilePage.ComingSoon />} />
+              </Route>
 
               {/* Admin Routes */}
               <Route
@@ -65,6 +76,10 @@ function App() {
                 <Route path="products/new" element={<AddProduct />} />
                 <Route path="products/edit/:id" element={<EditProduct />} />
                 <Route path="categories" element={<CategoryManagement />} />
+                <Route path="brands" element={<BrandManagement />} />
+                <Route path="banners" element={<BannerManagement />} />
+                <Route path="orders" element={<OrderManagement />} />
+                <Route path="customers" element={<CustomerManagement />} />
                 {/* Add more admin routes here */}
               </Route>
             </Routes>

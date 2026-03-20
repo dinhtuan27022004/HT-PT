@@ -23,15 +23,24 @@ export const useProductForm = (id = null) => {
     const [attributeImages, setAttributeImages] = useState({});
     const [generalImages, setGeneralImages] = useState([]);
 
-    useProductFormInit(id, form, message, navigate, setCategories, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading);
-    const { generateVariants, handleVariantChange } = useVariantLogic(form, attributes, setVariants);
+    const [brands, setBrands] = useState([]);
+    const [filteredBrands, setFilteredBrands] = useState([]);
+
+    useProductFormInit(id, form, message, navigate, setCategories, setSelectedCategory, setAttributes, setAttributeValues, setVariants, setSelectedImageAttributes, setImageAttributeValues, setGeneralImages, setAttributeImages, setLoading, setBrands, setFilteredBrands);
+    const { generateVariants, handleVariantChange } = useVariantLogic(form, attributes, variants, setVariants);
 
     const handleCategoryChange = async (cid) => {
         const cats = categories.length ? categories : await categoryService.getAllCategories();
         if (!categories.length) setCategories(cats);
         const cat = cats.find(c => c.id === cid);
         setSelectedCategory(cat); setAttributes(cat?.attributes || []);
-        setAttributeValues({}); setVariants([]); form.setFieldsValue({ attributes: {} });
+        setAttributeValues({}); setVariants([]);
+
+        // Filter brands
+        const associatedBrands = brands.filter(b => b.category_ids && b.category_ids.includes(cid));
+        setFilteredBrands(associatedBrands);
+
+        form.setFieldsValue({ attributes: {}, brand_id: null });
     };
 
     const handleAttributeValueChange = (n, v, t) => {
@@ -64,6 +73,8 @@ export const useProductForm = (id = null) => {
         submitting,
         categories,
         selectedCategory,
+        brands,
+        filteredBrands,
         attributes,
         attributeValues,
         inputValue,

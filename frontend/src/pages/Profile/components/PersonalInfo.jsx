@@ -6,7 +6,7 @@ const { Title, Text } = Typography;
 
 const PersonalInfo = ({ user, setIsEditModalOpen }) => {
     return (
-        <Card bordered={false}>
+        <Card bordered={false} style={{ borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                 <Title level={4} style={{ margin: 0 }}>Thông tin cá nhân</Title>
                 <Button icon={<EditOutlined />} onClick={() => setIsEditModalOpen(true)}>Chỉnh sửa</Button>
@@ -27,6 +27,12 @@ const PersonalInfo = ({ user, setIsEditModalOpen }) => {
                 <Col span={12}>
                     <Text type="secondary">Giới tính</Text>
                     <div style={{ fontSize: '16px', fontWeight: '500' }}>{user?.gender === 'male' ? 'Nam' : user?.gender === 'female' ? 'Nữ' : 'Khác'}</div>
+                </Col>
+                <Col span={12}>
+                    <Text type="secondary">Ngày sinh</Text>
+                    <div style={{ fontSize: '16px', fontWeight: '500' }}>
+                        {user?.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}
+                    </div>
                 </Col>
             </Row>
         </Card>

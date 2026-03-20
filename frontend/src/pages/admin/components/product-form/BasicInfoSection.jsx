@@ -3,7 +3,7 @@ import { Card, Row, Col, Form, Input, Select } from 'antd';
 
 const { Option } = Select;
 
-const BasicInfoSection = ({ categories, onCategoryChange }) => {
+const BasicInfoSection = ({ categories, filteredBrands, onCategoryChange }) => {
     return (
         <Card title="Thông tin chung" style={{ marginBottom: 24, borderRadius: 12 }}>
             <Row gutter={16}>
@@ -28,7 +28,7 @@ const BasicInfoSection = ({ categories, onCategoryChange }) => {
             </Row>
 
             <Row gutter={16}>
-                <Col span={12}>
+                <Col span={8}>
                     <Form.Item
                         name="category_id"
                         label="Danh mục"
@@ -45,7 +45,24 @@ const BasicInfoSection = ({ categories, onCategoryChange }) => {
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col span={8}>
+                    <Form.Item
+                        name="brand_id"
+                        label="Thương hiệu"
+                        rules={[{ required: true, message: 'Chọn thương hiệu' }]}
+                    >
+                        <Select
+                            size="large"
+                            placeholder="Chọn thương hiệu"
+                            disabled={!filteredBrands || filteredBrands.length === 0}
+                        >
+                            {filteredBrands && filteredBrands.map(b => (
+                                <Option key={b.id} value={b.id}>{b.name}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                </Col>
+                <Col span={8}>
                     <Form.Item name="status" label="Trạng thái">
                         <Select size="large">
                             <Option value="active">Đang kinh doanh</Option>

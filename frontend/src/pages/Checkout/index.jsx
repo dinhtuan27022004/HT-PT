@@ -10,7 +10,7 @@ import { useCheckoutLogic } from './hooks/useCheckoutLogic';
 const { Title } = Typography;
 
 const CheckoutPage = () => {
-    const { navigate, cartItems, cartTotal, currentStep, setCurrentStep, loading, isSuccess, orderInfo, onFinish } = useCheckoutLogic();
+    const { navigate, cartItems, cartTotal, currentStep, setCurrentStep, loading, isSuccess, orderInfo, onFinish, addresses, selectedAddressId, setSelectedAddressId } = useCheckoutLogic();
     const [form] = Form.useForm();
     const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p || 0);
 
@@ -20,7 +20,7 @@ const CheckoutPage = () => {
         <MainLayout>
             <div style={{ padding: '64px 24px', maxWidth: '800px', margin: '0 auto' }}>
                 <Result status="success" title="Đặt hàng thành công!" subTitle={`Mã đơn hàng: ${orderInfo?.order_code}`}
-                    extra={[<Button type="primary" key="h" onClick={() => navigate('/')}>Tiếp tục mua sắm</Button>, <Button key="o" onClick={() => navigate('/orders')}>Xem đơn hàng</Button>]} />
+                    extra={[<Button type="primary" key="h" onClick={() => navigate('/')}>Tiếp tục mua sắm</Button>, <Button key="o" onClick={() => navigate('/profile/orders')}>Xem đơn hàng</Button>]} />
             </div>
         </MainLayout>
     );
@@ -37,7 +37,15 @@ const CheckoutPage = () => {
                         <Card style={{ borderRadius: '12px', marginBottom: '24px' }}>
                             <Steps current={currentStep} items={steps} style={{ marginBottom: '32px' }} />
                             <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ payment_method: 'cod' }}>
-                                <CheckoutForms currentStep={currentStep} setCurrentStep={setCurrentStep} form={form} loading={loading} />
+                                <CheckoutForms
+                                    currentStep={currentStep}
+                                    setCurrentStep={setCurrentStep}
+                                    form={form}
+                                    loading={loading}
+                                    addresses={addresses}
+                                    selectedAddressId={selectedAddressId}
+                                    setSelectedAddressId={setSelectedAddressId}
+                                />
                             </Form>
                         </Card>
                     </Col>

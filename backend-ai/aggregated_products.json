@@ -1,0 +1,26 @@
+[
+    {
+        "id": "a3955226-8ca7-4013-ae17-c6d4e212ab5c",
+        "name": "iPhone 17 Pro",
+        "description": null,
+        "category_name": null,
+        "variants": [
+            {
+                "id": "6e571784-7882-426c-8c08-6b4a1a2bdd4b",
+                "sku": "ip17-pro-CAM",
+                "cost": null,
+                "price": 68908609.0,
+                "status": "active",
+                "attributes": {
+                    "name": "value"
+                },
+                "compare_at": null,
+                "created_at": "2026-02-18T01:15:07.246163+07:00",
+                "product_id": "a3955226-8ca7-4013-ae17-c6d4e212ab5c",
+                "updated_at": "2026-02-18T01:44:30.661255+07:00",
+                "variant_name": "Cam"
+            }
+        ],
+        "image_url": "/uploads/1771352073583-48705049.jpeg"
+    }
+]

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Input, Drawer, Button, message } from 'antd';
+import { Input, Drawer, Button, App } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { MenuOutlined } from '@ant-design/icons';
 import { COLORS } from '../../theme/colors';
@@ -13,6 +13,7 @@ import './AppHeader.css';
 const { Search } = Input;
 
 const AppHeader = () => {
+    const { message } = App.useApp();
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [authModalVisible, setAuthModalVisible] = useState(false);
     const [user, setUser] = useState(authService.getCurrentUser());
@@ -38,7 +39,6 @@ const AppHeader = () => {
             <div className="header-container">
                 <div className="header-left">
                     <div className="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>GEARVN</div>
-                    <Button className="category-btn" icon={<MenuOutlined />} onClick={() => setDrawerVisible(true)}>Danh mục</Button>
                 </div>
                 <div className="header-center">
                     <Search placeholder="Bạn cần tìm gì?" onSearch={onSearch} className="search-bar" size="large" enterButton />
@@ -51,10 +51,20 @@ const AppHeader = () => {
                     handleLogout={handleLogout}
                 />
             </div>
-            <Drawer title="Danh mục sản phẩm" placement="left" onClose={() => setDrawerVisible(false)} open={drawerVisible}>
-                <CategorySidebar mode="inline" />
-            </Drawer>
-            <AuthModal open={authModalVisible} onCancel={() => setAuthModalVisible(false)} />
+            <AuthModal
+                open={authModalVisible}
+                onCancel={() => setAuthModalVisible(false)}
+                onLoginSuccess={() => {
+                    try {
+                        const currentUser = authService.getCurrentUser();
+                        setUser(currentUser);
+                        setAuthModalVisible(false);
+                    } catch (error) {
+                        console.error("Login success handler error:", error);
+                        setAuthModalVisible(false);
+                    }
+                }}
+            />
         </header>
     );
 };

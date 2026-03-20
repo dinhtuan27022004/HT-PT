@@ -1,0 +1,12 @@
+Table Structure for "users":
+date_of_birth: date
+created_at: timestamp with time zone
+updated_at: timestamp with time zone
+id: uuid
+phone: text
+gender: text
+status: text
+role: text
+email: USER-DEFINED
+password_hash: text
+full_name: text

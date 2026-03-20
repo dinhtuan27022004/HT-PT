@@ -1,0 +1,10 @@
+📋 Columns for 'order_items' table:
+- id (uuid)
+- order_id (uuid)
+- variant_id (uuid)
+- line_total (numeric)
+- option_details (jsonb)
+- unit_price (numeric)
+- quantity (integer)
+- sku (text)
+- name (text)
