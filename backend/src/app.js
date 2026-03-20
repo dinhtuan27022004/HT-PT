@@ -4,6 +4,17 @@ const morgan = require('morgan');
 
 const app = express();
 
+// Request logger
+app.use((req, res, next) => {
+    const fs = require('fs');
+    try {
+        fs.appendFileSync('d:\\2025 - S2\\HTTMDT\\E-Web-Project\\backend\\request_log.txt', `[${new Date().toISOString()}] ${req.method} ${req.url}\n`);
+    } catch (e) {
+        // ignore write errors to not crash app
+    }
+    next();
+});
+
 // Middleware
 app.use(morgan('dev'));
 app.use(cors());
@@ -35,6 +46,8 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+    const fs = require('fs');
+    fs.appendFileSync('global_error_log.txt', `[${new Date().toISOString()}] Global Error: ${err.stack}\n`);
     console.error(err.stack);
     res.status(err.status || 500).json({
         status: 'error',

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Input, Drawer, Button, message } from 'antd';
+import { Input, Drawer, Button, App } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { MenuOutlined } from '@ant-design/icons';
 import { COLORS } from '../../theme/colors';
@@ -13,6 +13,7 @@ import './AppHeader.css';
 const { Search } = Input;
 
 const AppHeader = () => {
+    const { message } = App.useApp();
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [authModalVisible, setAuthModalVisible] = useState(false);
     const [user, setUser] = useState(authService.getCurrentUser());

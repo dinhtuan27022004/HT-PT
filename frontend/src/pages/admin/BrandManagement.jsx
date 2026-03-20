@@ -3,16 +3,16 @@ import {
     Table,
     Button,
     Space,
-    Modal,
     Form,
     Input,
     Upload,
-    message,
     Image,
     Typography,
     Card,
     Select,
-    Tag
+    Tag,
+    App,
+    Modal
 } from 'antd';
 import {
     PlusOutlined,
@@ -28,6 +28,7 @@ const { Title } = Typography;
 const { Option } = Select;
 
 const BrandManagement = () => {
+    const { message, modal } = App.useApp();
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -180,7 +181,7 @@ const BrandManagement = () => {
     };
 
     const handleDelete = async (id) => {
-        Modal.confirm({
+        modal.confirm({
             title: 'Xóa thương hiệu',
             content: 'Bạn có chắc chắn muốn xóa thương hiệu này không?',
             okText: 'Xóa',
@@ -253,9 +254,9 @@ const BrandManagement = () => {
                         type="primary"
                         icon={<EditOutlined />}
                         style={{
-                            backgroundColor: 'var(--color-primary)', 
-                            borderColor: 'var(--color-primary)', 
-                            color: '#fff' 
+                            backgroundColor: 'var(--color-primary)',
+                            borderColor: 'var(--color-primary)',
+                            color: '#fff'
                         }}
                         onClick={() => handleOpenModal(record)}
                         size="small"
@@ -263,10 +264,10 @@ const BrandManagement = () => {
                     <Button
                         type="primary"
                         icon={<DeleteOutlined />}
-                        style={{ 
-                            backgroundColor: 'var(--color-primary)', 
-                            borderColor: 'var(--color-primary)', 
-                            color: '#fff' 
+                        style={{
+                            backgroundColor: 'var(--color-primary)',
+                            borderColor: 'var(--color-primary)',
+                            color: '#fff'
                         }}
                         size="small"
                         onClick={() => handleDelete(record.id)}

@@ -1,0 +1,5 @@
+id (uuid)
+product_id (uuid)
+attribute_combo (jsonb)
+image_urls (ARRAY)
+created_at (timestamp with time zone)

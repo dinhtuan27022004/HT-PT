@@ -7,6 +7,8 @@ import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
 import BrandManagement from './pages/admin/BrandManagement';
 import BannerManagement from './pages/admin/BannerManagement';
+import OrderManagement from './pages/admin/OrderManagement';
+import CustomerManagement from './pages/admin/CustomerManagement';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import AddProduct from './pages/admin/AddProduct';
 import EditProduct from './pages/admin/EditProduct';
@@ -76,6 +78,8 @@ function App() {
                 <Route path="categories" element={<CategoryManagement />} />
                 <Route path="brands" element={<BrandManagement />} />
                 <Route path="banners" element={<BannerManagement />} />
+                <Route path="orders" element={<OrderManagement />} />
+                <Route path="customers" element={<CustomerManagement />} />
                 {/* Add more admin routes here */}
               </Route>
             </Routes>

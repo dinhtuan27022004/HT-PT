@@ -3,6 +3,7 @@ import AppHeader from './AppHeader';
 import AppFooter from './AppFooter';
 import CategorySidebar from '../sidebar/CategorySidebar';
 import '../../styles/layout.css';
+import Chatbot from '../chat/Chatbot';
 
 const MainLayout = ({ children, showSidebar = false }) => {
     return (
@@ -21,6 +22,7 @@ const MainLayout = ({ children, showSidebar = false }) => {
             </div>
 
             <AppFooter />
+            <Chatbot />
         </div>
     );
 };

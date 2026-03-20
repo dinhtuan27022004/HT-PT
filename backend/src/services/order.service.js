@@ -149,8 +149,140 @@ const getOrderById = async (orderId, userId) => {
     return result.rows[0];
 };
 
+/**
+ * Get all orders (Admin)
+ * @param {Object} filters - filters (status, search)
+ */
+const getAllOrders = async (filters = {}) => {
+    let query = `
+        SELECT o.*, u.full_name as customer_name, u.email as customer_email,
+               (
+                   SELECT pai.image_urls[1]
+                   FROM order_items oi
+                   JOIN product_variants pv ON oi.variant_id = pv.id
+                   LEFT JOIN product_attribute_images pai ON pv.product_id = pai.product_id
+                   WHERE oi.order_id = o.id
+                   ORDER BY oi.id ASC, pai.created_at ASC
+                   LIMIT 1
+               ) as first_item_image,
+               (
+                   SELECT json_agg(jsonb_build_object(
+                       'id', oi.id,
+                       'variant_id', oi.variant_id,
+                       'sku', oi.sku,
+                       'name', oi.name,
+                       'unit_price', oi.unit_price,
+                       'quantity', oi.quantity,
+                       'line_total', oi.line_total,
+                       'image', (
+                           SELECT pai2.image_urls[1] 
+                           FROM product_attribute_images pai2 
+                           WHERE pai2.product_id = pv.product_id 
+                           LIMIT 1
+                       )
+                   ))
+                   FROM order_items oi
+                   JOIN product_variants pv ON oi.variant_id = pv.id
+                   WHERE oi.order_id = o.id
+               ) as items
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+    `;
+    const params = [];
+    const conditions = [];
+
+    if (filters.status) {
+        params.push(filters.status);
+        conditions.push(`o.status = $${params.length}`);
+    }
+
+    if (filters.search) {
+        params.push(`%${filters.search}%`);
+        conditions.push(`(o.order_code ILIKE $${params.length} OR u.full_name ILIKE $${params.length})`);
+    }
+
+    if (filters.category_id) {
+        params.push(filters.category_id);
+        conditions.push(`EXISTS (
+            SELECT 1 FROM order_items oi
+            JOIN product_variants pv ON oi.variant_id = pv.id
+            JOIN products p ON pv.product_id = p.id
+            WHERE oi.order_id = o.id AND p.category_id = $${params.length}
+        )`);
+    }
+
+    if (filters.startDate) {
+        params.push(filters.startDate);
+        conditions.push(`o.created_at >= $${params.length}::timestamp`);
+    }
+
+    if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(' AND ');
+    }
+
+    query += ` ORDER BY o.created_at DESC`;
+
+    const result = await db.query(query, params);
+    const baseUrl = process.env.BASE_URL || '';
+
+    return result.rows.map(order => {
+        if (order.first_item_image && !order.first_item_image.startsWith('http')) {
+            order.first_item_image = `${baseUrl}${order.first_item_image}`;
+        }
+        if (order.items) {
+            order.items = order.items.map(item => {
+                if (item.image && !item.image.startsWith('http')) {
+                    item.image = `${baseUrl}${item.image}`;
+                }
+                return item;
+            });
+        }
+        return order;
+    });
+};
+
+/**
+ * Update order status (Admin)
+ * @param {string} orderId - Order UUID
+ * @param {string} status - New Status
+ * @param {string} comment - Comment for history
+ */
+const updateOrderStatus = async (orderId, status, comment) => {
+    const client = await db.connect();
+    try {
+        await client.query('BEGIN');
+
+        const updateQuery = `
+            UPDATE orders 
+            SET status = $1, updated_at = NOW() 
+            WHERE id = $2 
+            RETURNING *
+        `;
+        const result = await client.query(updateQuery, [status, orderId]);
+
+        if (result.rows.length === 0) {
+            throw new Error('Order not found');
+        }
+
+        // Add history
+        await client.query('INSERT INTO order_status_history (order_id, status, comment) VALUES ($1, $2, $3)', [
+            orderId, status, comment || `Trạng thái được cập nhật thành: ${status}`
+        ]);
+
+        await client.query('COMMIT');
+        return result.rows[0];
+    } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        client.release();
+    }
+};
+
 module.exports = {
     createOrder,
     getUserOrders,
-    getOrderById
+    getOrderById,
+    getAllOrders,
+    updateOrderStatus
 };

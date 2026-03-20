@@ -10,6 +10,8 @@ const getAllCategories = async (req, res) => {
         const categories = await categoryService.getAllCategories();
         return successResponse(res, categories, 'Categories retrieved successfully');
     } catch (error) {
+        const fs = require('fs');
+        fs.appendFileSync('error_log.txt', `[${new Date().toISOString()}] Error in getAllCategories: ${error.stack}\n`);
         console.error('Error in getAllCategories:', error);
         return errorResponse(res, error.message, 500);
     }

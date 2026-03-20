@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Tabs, message } from 'antd';
+import { Modal, Tabs, App } from 'antd';
 import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/auth.service';
@@ -8,6 +8,7 @@ import RegisterForm from './auth/RegisterForm';
 import './AuthModal.css';
 
 const AuthModal = ({ open, onCancel, onLoginSuccess }) => {
+    const { message } = App.useApp();
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('1');
     const navigate = useNavigate();
@@ -16,6 +17,7 @@ const AuthModal = ({ open, onCancel, onLoginSuccess }) => {
         setLoading(true);
         try {
             const { email, password } = values;
+            const res = await authService.login(email, password);
             if (res.status === 'success') {
                 message.success('Đăng nhập thành công!');
                 setLoading(false); // Ensure loading is off
@@ -36,7 +38,19 @@ const AuthModal = ({ open, onCancel, onLoginSuccess }) => {
                 }
             }
         } catch (error) {
-            message.error(error.response?.data?.message || 'Đăng nhập thất bại!');
+            const errorMsg = error.response?.data?.message || 'Đăng nhập thất bại!';
+            if (errorMsg === 'Tài khoản của bạn đã bị khóa') {
+                Modal.error({
+                    title: 'Tài khoản bị khóa',
+                    content: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để được hỗ trợ.',
+                    okText: 'Đồng ý',
+                    onOk: () => {
+                        authService.logout();
+                    }
+                });
+            } else {
+                message.error(errorMsg);
+            }
         } finally { setLoading(false); }
     };
 

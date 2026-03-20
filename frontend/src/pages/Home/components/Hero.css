@@ -1,7 +1,7 @@
 .hero-section {
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 2/1;
+    aspect-ratio: 3/1;
     border-radius: 24px;
     overflow: hidden;
 }
