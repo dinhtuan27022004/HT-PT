@@ -1,15 +1,14 @@
 const { Pool } = require('pg');
 
-// Create PostgreSQL connection pool
+// Create PostgreSQL connection pool using DATABASE_URL (Neon DB with SSL)
 const pool = new Pool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
-    max: 10, // Maximum number of connections in pool
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    },
+    max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    connectionTimeoutMillis: 5000,
 });
 
 // Test connection

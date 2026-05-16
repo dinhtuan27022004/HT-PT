@@ -242,7 +242,7 @@ const Chatbot = () => {
                                                                          <div style={{ width: 110, height: 110, minWidth: 110, overflow: 'hidden', borderRadius: 6, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                                              <img 
                                                                                  alt={p.name} 
-                                                                                 src={`http://localhost:5000${p.image_url}`} 
+                                                                                 src={p.image_url && p.image_url.startsWith('http') ? p.image_url : `http://localhost:3000${p.image_url}`} 
                                                                                  style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
                                                                              />
                                                                          </div>

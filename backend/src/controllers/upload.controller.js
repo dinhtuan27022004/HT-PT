@@ -1,5 +1,3 @@
-const path = require('path');
-
 const uploadImage = (req, res) => {
     try {
         if (!req.file) {
@@ -9,8 +7,8 @@ const uploadImage = (req, res) => {
             });
         }
 
-        const baseUrl = process.env.BASE_URL || '';
-        const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+        // Cloudinary returns the URL in req.file.path
+        const imageUrl = req.file.path;
 
         res.status(200).json({
             status: 'success',
@@ -39,9 +37,8 @@ const uploadImages = (req, res) => {
             });
         }
 
-        const baseUrl = process.env.BASE_URL || '';
         const imageUrls = req.files.map(file => ({
-            url: `${baseUrl}/uploads/${file.filename}`,
+            url: file.path, // Cloudinary URL
             filename: file.filename,
             originalName: file.originalname,
             size: file.size

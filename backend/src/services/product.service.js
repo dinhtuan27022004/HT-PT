@@ -7,6 +7,10 @@ const stripBaseUrlFromImages = (attribute_images) => {
   return attribute_images.map(ai => ({
     ...ai,
     image_urls: ai.image_urls.map(url => {
+      // Keep Cloudinary URLs as-is (they start with https://res.cloudinary.com)
+      if (url && url.startsWith('https://res.cloudinary.com')) {
+        return url;
+      }
       if (url && url.startsWith(baseUrl) && baseUrl !== '') {
         return url.replace(baseUrl, '');
       }
